@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 export const sendOTP = async (email: string, name: string, otp: number) => {
     try {
       const mailOptions = {
-        from: "Thrivr <no-reply@thrivr.com>",
+        from: "Clark <no-reply@clarkai.com>",
         to: email,
         subject: "Verify your Identity",
         html: `<!DOCTYPE html>

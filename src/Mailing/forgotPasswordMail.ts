@@ -30,9 +30,8 @@ const transporter = nodemailer.createTransport({
       frontendURL
     );
     try {
-      console.log("fjfj");
       const mailOptions = {
-        from: "Thrivr <no-reply@thrivr.com>",
+        from: "Clark <no-reply@clarkai.com>",
         to: email,
         subject: "Verify your Identity",
         html: `<!DOCTYPE html>

@@ -23,7 +23,6 @@ const Auth: Auth = {
   signup: async (req: Request | any, res: Response) => {
     try {
       const { fullname, email, password, country } = req.body;
-
       if (
         !fullname ||
         !email ||
@@ -32,7 +31,7 @@ const Auth: Auth = {
         fullname.length < 1 ||
         email.length < 1 ||
         password.length < 1 ||
-        CountQueuingStrategy.length < 1
+        country.length < 1
       ) {
         return res.status(400).json({ error: "Bad request." });
       } else {
@@ -63,7 +62,6 @@ const Auth: Auth = {
       if (!otp || !email) {
         return res.status(400).json({ error: "Bad request." });
       } else {
-        console.log(otpCache.get(`otp:${email}`))
         if (otp != otpCache.get(`otp:${email}`)) {
           return res.status(409).json({
             message: "Incorrect OTP.",

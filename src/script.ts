@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import Auth from "./controllers/Auth";
 import middlewares from "./middlewares/verifyToken";
+import userActions from "./controllers/UserActions";
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -52,6 +53,9 @@ app.post("/api/v1/auth/verify-otp", Auth.verifyOTP);
 app.post("/api/v1/resend-otp", Auth.resendOTP);
 app.post("/api/v1/forgot-password", Auth.forgotPassword);
 app.post("/api/v1/reset-password", Auth.resetPassword);
+
+
+app.get("/api/v1/user", middlewares.authenticateToken, userActions.getUser);
 
 
 
