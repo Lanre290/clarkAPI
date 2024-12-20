@@ -87,11 +87,11 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
                 <li class="feature-item"><strong>AI-Generated Quizzes:</strong> Test your knowledge with customized quizzes created by AI based on your study materials.</li>
             </ul>
               <p>If you have any questions, feel free to reach out. We're always here to help!</p>
-              <a href="https://www.clarkai.com" class="cta-button">Get Started</a>
+              <a href="https://clarkai-baxl.onrender.com/" class="cta-button">Get Started</a>
               <div class="footer">
                   Best regards,<br>
                   The Clark Team<br>
-                  <a href="https://www.clarkai.com" style="color: #007bff;">ClarkAI.com</a>
+                  <a href="https://clarkai-baxl.onrender.com/" style="color: #007bff;">ClarkAI.com</a>
               </div>
           </div>
       </body>
