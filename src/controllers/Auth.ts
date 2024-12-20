@@ -80,7 +80,8 @@ const Auth: Auth = {
               name: fullname,
               email: email,
               password: enc,
-              country: country
+              country: country,
+              last_active_date: new Date().toISOString().split('T')[0]
             }).then((user) => {
               if (user) {
                 const { password, ...userRef } =
