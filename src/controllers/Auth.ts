@@ -95,7 +95,8 @@ const Auth: Auth = {
                   message: "Success",
                   code: "SIGNUP_COMPLETE",
                   details: "Signup completed.",
-                  token: token
+                  token: token,
+                  user: userRef
                 });
               } else {
                 return res.status(500).json({

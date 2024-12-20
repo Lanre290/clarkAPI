@@ -16,6 +16,10 @@ const userActions: userActions = {
     } else {
       let user = await User.findOne({ where: { id: user_id } });
 
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
       const { password, createdAt, updatedAt, ...userData } = user?.dataValues;
 
       const lastActivity = new Date(userData.last_active_date);
