@@ -3,6 +3,7 @@ import { Response } from "express";
 import bcrypt from "bcryptjs";
 import { sendOTP } from "../Mailing/OTPMail";
 import { sendForgotEmail } from "../Mailing/forgotPasswordMail";
+import { sendWelcomeEmail } from "../Mailing/welcomeMail";
 const jwt = require("jsonwebtoken");
 const NodeCache = require( "node-cache" );
 const userCache = new NodeCache();
@@ -88,6 +89,7 @@ const Auth: Auth = {
                   expiresIn: "24h",
                 });
 
+                sendWelcomeEmail(email, fullname);
                 return res.status(201).json({
                   message: "Success",
                   code: "SIGNUP_COMPLETE",

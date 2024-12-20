@@ -83,7 +83,7 @@ export const sendOTP = async (email: string, name: string, otp: number) => {
                 <p>Thanks for being part of our community! If you need any help, feel free to reach out.</p>
                 <div class="footer">
                     Best regards,<br>
-                    Thrivr
+                    Clark
                 </div>
             </div>
         </body>
