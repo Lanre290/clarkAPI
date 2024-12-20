@@ -5,7 +5,7 @@ import { sendOTP } from "../Mailing/OTPMail";
 import { sendForgotEmail } from "../Mailing/forgotPasswordMail";
 import { sendWelcomeEmail } from "../Mailing/welcomeMail";
 const jwt = require("jsonwebtoken");
-const NodeCache = require( "node-cache" );
+const NodeCache = require("node-cache");
 const userCache = new NodeCache();
 const otpCache = new NodeCache();
 
@@ -18,35 +18,43 @@ interface Auth {
   resetPassword: any;
 }
 
-
-
 const Auth: Auth = {
   signup: async (req: Request | any, res: Response) => {
     try {
-      const { fullname, email, password, country } = req.body;
+      let { fullname, email, password, country, is_google } = req.body;
+      console.log(req.body);
       if (
         !fullname ||
         !email ||
-        !password ||
-        !country ||
-        fullname.length < 1 ||
-        email.length < 1 ||
-        password.length < 1 ||
-        country.length < 1
+        !country
       ) {
         return res.status(400).json({ error: "Bad request." });
       } else {
+        if (is_google != true && is_google != false) {
+          return res.status(400).json({ error: "Bad request." });
+        }
+
+        if (is_google == false && !password) {
+          return res.status(400).json({ error: "Bad request." });
+        }
+
+        if (is_google == true) {
+          password = "";
+        }
+
         let emailExists = await User.findOne({ where: { email: email } });
 
         if (!emailExists) {
           let preUser = req.body;
-          preUser.role = 'user';
-          userCache.set( `user:${email}`, preUser );
+          preUser.role = "user";
+          userCache.set(`user:${email}`, preUser);
 
           const otp = Math.floor(1000 + Math.random() * 9000);
-          otpCache.set( `otp:${email}`, otp );
+          otpCache.set(`otp:${email}`, otp);
           sendOTP(email, fullname, otp);
-          return res.status(200).json({ success: true, message: 'Proceed to enter OTP.' });
+          return res
+            .status(200)
+            .json({ success: true, message: "Proceed to enter OTP." });
         } else {
           return res.status(422).json({ error: "Email already exists." });
         }
@@ -71,21 +79,25 @@ const Auth: Auth = {
         } else {
           let userInfo = userCache.get(`user:${email}`);
           if (userInfo.role == "user") {
-            const { fullname, email, password, country } = userInfo;
+            let { fullname, email, password, country, is_google } = userInfo;
             const SALT_ROUNDS = process.env.SALT_ROUNDS as unknown as string;
             const saltRounds: number = parseInt(SALT_ROUNDS || "10", 10);
             const enc = await bcrypt.hash(password, saltRounds);
+
+
+            if(is_google == true){
+              password = '';
+            }
 
             User.create({
               name: fullname,
               email: email,
               password: enc,
               country: country,
-              last_active_date: new Date().toISOString().split('T')[0]
+              last_active_date: new Date().toISOString().split("T")[0],
             }).then((user) => {
               if (user) {
-                const { password, ...userRef } =
-                  user.dataValues;
+                const { password, ...userRef } = user.dataValues;
                 const token = jwt.sign(userRef, process.env.SECRET_KEY, {
                   expiresIn: "24h",
                 });
@@ -96,7 +108,7 @@ const Auth: Auth = {
                   code: "SIGNUP_COMPLETE",
                   details: "Signup completed.",
                   token: token,
-                  user: userRef
+                  user: userRef,
                 });
               } else {
                 return res.status(500).json({
@@ -116,17 +128,19 @@ const Auth: Auth = {
 
   resendOTP: async (req: Request | any, res: Response) => {
     try {
-        let {email} = req.body;
-      
-        let { email_, name } = userCache.get(`user:${email}`);;
-        if(!userCache.get(`user:${email_}`)){
-          return res.status(404).json({error: 'No login process found.'});
-        }
-        const otp = Math.floor(1000 + Math.random() * 9000);
-        otpCache.set(`otp:${email_}`, otp );
+      let { email } = req.body;
 
-        sendOTP(email_, name, otp);
-        return res.status(200).json({sucess: true, message: 'OTP sent sucessfully.'});
+      let { email_, name } = userCache.get(`user:${email}`);
+      if (!userCache.get(`user:${email_}`)) {
+        return res.status(404).json({ error: "No login process found." });
+      }
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      otpCache.set(`otp:${email_}`, otp);
+
+      sendOTP(email_, name, otp);
+      return res
+        .status(200)
+        .json({ sucess: true, message: "OTP sent sucessfully." });
     } catch (error) {
       return res.status(500).json({ error: "Server error." });
     }
@@ -134,17 +148,34 @@ const Auth: Auth = {
 
   login: async (req: Request | any, res: Response) => {
     try {
-      let { email, password } = req.body;
+      let { email, password, is_google } = req.body;
+      console.log(req.body);
 
-      if (!email || !password || email.length < 1 || password.length < 1) {
+      if (!email || !is_google || email.length < 1) {
         return res.status(400).json({ error: "Bad request." });
       } else {
+        if (is_google != true && is_google != false) {
+          return res.status(400).json({ error: "Bad request." });
+        }
+
+        if (is_google == false && !password) {
+          return res.status(400).json({ error: "Bad request." });
+        }
+
+        if (is_google == true) {
+          password = "";
+        }
+
         let user = await User.findOne({ where: { email: email } });
 
         if (!user) {
           return res.status(404).json({ error: "Invalid credentials. 😥" });
         } else {
-          const match = await bcrypt.compare(password, user.password);
+          const match =
+            is_google == true
+              ? true
+              : await bcrypt.compare(password, user.password);
+
           if (match) {
             const { password, createdAt, updatedAt, ...userRef } =
               user.dataValues;
