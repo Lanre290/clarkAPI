@@ -36,6 +36,23 @@ User.init(
       allowNull: false,
     },
 
+    last_active_date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    streak_count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false
+    },
+
+    is_premium: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false
+    },
+
     role: {
       type: DataTypes.STRING,
       defaultValue: 'user',
