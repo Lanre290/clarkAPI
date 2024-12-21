@@ -95,6 +95,7 @@ const Auth: Auth = {
               password: enc,
               country: country,
               last_active_date: new Date().toISOString().split("T")[0],
+              by_google: is_google
             }).then((user) => {
               if (user) {
                 const { password, ...userRef } = user.dataValues;
@@ -149,9 +150,8 @@ const Auth: Auth = {
   login: async (req: Request | any, res: Response) => {
     try {
       let { email, password, is_google } = req.body;
-      console.log(req.body);
 
-      if (!email || !is_google || email.length < 1) {
+      if (!email) {
         return res.status(400).json({ error: "Bad request." });
       } else {
         if (is_google != true && is_google != false) {
@@ -176,7 +176,7 @@ const Auth: Auth = {
               ? true
               : await bcrypt.compare(password, user.password);
 
-          if (match) {
+          if (match || user.by_google) {
             const { password, createdAt, updatedAt, ...userRef } =
               user.dataValues;
             const token = jwt.sign(userRef, process.env.SECRET_KEY, {

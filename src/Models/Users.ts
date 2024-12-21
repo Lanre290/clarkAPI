@@ -5,6 +5,12 @@ class User extends Model {
   public id!: number;
   public email!: string;
   public password!: string;
+  public country!: string;
+  public last_active_date!: string;
+  public streak_count!: string;
+  public by_google!: string;
+  public is_premium!: string;
+  public role!: string;
 }
 
 User.init(
@@ -44,6 +50,12 @@ User.init(
     streak_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+      allowNull: false
+    },
+
+    by_google: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false
     },
 
