@@ -9,7 +9,6 @@ const userActions: userActions = {
   getUser: async (req: Request | any, res: Response) => {
     const user = req.user;
     const user_id = user.id;
-    const today = new Date().toISOString().split('T')[0];
 
     if (!user || !user_id) {
       return res.status(401).json({ error: "Unauthorized access." });
@@ -22,8 +21,15 @@ const userActions: userActions = {
 
       const { password, createdAt, updatedAt, ...userData } = user?.dataValues;
 
+      const today = new Date(); // Current date and time
       const lastActivity = new Date(userData.last_active_date);
-      const diffDays = Math.floor(((new Date(today) as any) - (lastActivity as any)) / (1000 * 60 * 60 * 24));
+
+      // Use the start of the day in local time for both dates
+      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const startOfLastActivity = new Date(lastActivity.getFullYear(), lastActivity.getMonth(), lastActivity.getDate());
+
+    const diffDays = Math.floor(((startOfToday as any) - (startOfLastActivity as any)) / (1000 * 60 * 60 * 24));
+
 
 
       // increase streak if it is one day
