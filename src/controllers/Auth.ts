@@ -176,7 +176,10 @@ const Auth: Auth = {
               ? true
               : await bcrypt.compare(password, user.password);
 
-          if (match || user.by_google) {
+          if(user.by_google && !is_google){
+            return res.status(401).json({error: 'Login with google auth.'});
+          }
+          if (match) {
             const { password, createdAt, updatedAt, ...userRef } =
               user.dataValues;
             const token = jwt.sign(userRef, process.env.SECRET_KEY, {
