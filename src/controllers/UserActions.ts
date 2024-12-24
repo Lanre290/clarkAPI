@@ -21,23 +21,25 @@ const userActions: userActions = {
 
       const { password, createdAt, updatedAt, ...userData } = user?.dataValues;
 
-      const today = new Date(); // Current date and time
-      const lastActivity = new Date(userData.last_active_date);
+      const date = new Date();
+      const today = `${date.getFullYear()}${date.getMonth()}${date.getDate()}`;
+      const lastActivity = userData.last_active_date;
 
-      // Use the start of the day in local time for both dates
-      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const startOfLastActivity = new Date(lastActivity.getFullYear(), lastActivity.getMonth(), lastActivity.getDate());
+      console.log(today, lastActivity);
 
-    const diffDays = Math.floor(((startOfToday as any) - (startOfLastActivity as any)) / (1000 * 60 * 60 * 24));
-
-
+      
+      const diffDays = parseInt(today) - lastActivity;
 
       // increase streak if it is one day
-      if(diffDays == 1){
+      if(diffDays === 1){
         User.increment('streak_count', {
           by: 1,
           where: { id: user_id },
         })
+
+        User.update({last_active_date: today}, {where: {id: user_id}});
+        // return streak day + 1 if streak is continued
+        userData.streak_count  = userData.streak_count + 1;
       }
 
       return res.status(200).json({success: true, data: userData});
