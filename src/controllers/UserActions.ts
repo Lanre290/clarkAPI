@@ -3,6 +3,7 @@ import User from "../Models/Users";
 
 interface userActions {
   getUser: Function;
+  updateUser: Function;
 }
 
 const userActions: userActions = {
@@ -25,7 +26,6 @@ const userActions: userActions = {
       const today = `${date.getFullYear()}${date.getMonth()}${date.getDate()}`;
       const lastActivity = userData.last_active_date;
 
-      console.log(today, lastActivity);
 
       
       const diffDays = parseInt(today) - lastActivity;
@@ -41,9 +41,34 @@ const userActions: userActions = {
         // return streak day + 1 if streak is continued
         userData.streak_count  = userData.streak_count + 1;
       }
+      else{
+        User.update({last_active_date: today}, {where: {id: user_id}});
+      }
 
       return res.status(200).json({success: true, data: userData});
     }
+  },
+
+  updateUser: async (req: Request & any, res: Response) => {
+    const user = req.user;
+    const user_id = user.id;
+    const { name } = req.body;
+
+    if (!user || !user_id) 
+      return res.status(401).json({ error: "Unauthorized access." });
+
+    if(!name)
+      return res.status(400).json({error: 'Bad request.'});
+
+    let userInfo = await User.findOne({ where: { id: user_id } });
+
+    if (!userInfo) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    User.update({name: name}, {where: {id: user_id}});
+
+    return res.status(200).json({success: true}); 
   },
 };
 

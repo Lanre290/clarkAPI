@@ -22,7 +22,6 @@ const Auth: Auth = {
   signup: async (req: Request | any, res: Response) => {
     try {
       let { fullname, email, password, country, is_google } = req.body;
-      console.log(req.body);
       if (
         !fullname ||
         !email ||

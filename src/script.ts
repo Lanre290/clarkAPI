@@ -56,6 +56,7 @@ app.post("/api/v1/reset-password", Auth.resetPassword);
 
 
 app.get("/api/v1/user", middlewares.authenticateToken, userActions.getUser);
+app.patch("/api/v1/user", middlewares.authenticateToken, userActions.updateUser);
 
 
 
